@@ -1,0 +1,5 @@
+^MANIFEST\.SKIP
+^README.md
+^dist.ini
+^AnyEvent-Beanstalk
+^_test
