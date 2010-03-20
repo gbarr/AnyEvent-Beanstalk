@@ -1,2 +1,7 @@
 {{$NEXT}}
+
+1.100790 -- Sat Mar 20 09:34:50 CDT 2010
+  Fixed dependency on YAML.pm
+
+1.100750 -- Tue Mar 16 14:31:42 CDT 2010
   Initial version
