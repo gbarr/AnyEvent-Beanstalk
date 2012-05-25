@@ -1,4 +1,5 @@
 {{$NEXT}}
+  * Fix Used and watched tubes to track correctly after use [Matt Grimm]
 
 1.110490 -- Fri Feb 18 13:50:41 CST 2011
   * Fix watch_only to use list_watched_tubes, not list_tubes

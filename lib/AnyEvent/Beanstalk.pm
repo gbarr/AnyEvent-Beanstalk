@@ -397,7 +397,7 @@ sub use {
   $self->run_cmd(
     'use' => $tube,
     sub {
-      $self->{__using} = $_[1] if @_ and $_[0] eq 'USING';
+      $self->{__using} = $_[0] if @_ and $_[1] =~ /^USING/;
       $cb[0]->(@_) if @cb;
     }
   );
@@ -463,7 +463,7 @@ sub watch {
   $self->run_cmd(
     'watch' => $tube,
     sub {
-      $self->{__watching}{$tube} = 1 if @_ and $_[0] eq 'WATCHING';
+      $self->{__watching}{$tube} = 1 if @_ and $_[1] =~ /^WATCHING/;
       $cb[0]->(@_) if @cb;
     }
   );
@@ -478,7 +478,7 @@ sub ignore {
   $self->run_cmd(
     'ignore' => $tube,
     sub {
-      delete $self->{__watching}{$tube} if @_ and $_[0] eq 'WATCHING';
+      delete $self->{__watching}{$tube} if @_ and $_[1] =~ /^WATCHING/;
       $cb[0]->(@_) if @cb;
     }
   );
@@ -553,7 +553,7 @@ sub pause_tube {
 
 sub watching {
   my $self = shift;
-  return unless $self->{sock};
+  return unless $self->{_sock};
   my $watching = $self->{__watching} or return;
   return keys %$watching;
 }
