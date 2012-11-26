@@ -313,6 +313,7 @@ sub watch_only {
       foreach my $t (@$tubes) {
         $tubes{$t} = 0 unless delete $tubes{$t};
       }
+      $done->() if !keys %tubes;
       foreach my $t (sort { $tubes{$b} <=> $tubes{$a} } keys %tubes) {
         my $cmd = $tubes{$t} ? 'watch' : 'ignore';
         $self->run_cmd(
