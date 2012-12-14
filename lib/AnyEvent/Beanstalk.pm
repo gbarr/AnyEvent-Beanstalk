@@ -115,6 +115,7 @@ my %EXPECT = qw(
   peek-delayed         FOUND
   peek-buried          FOUND
   kick                 KICKED
+  kick-job             KICKED
   stats-job            OK
   stats-tube           OK
   stats                OK
@@ -389,6 +390,13 @@ sub kick {
   $self->run_cmd('kick' => $bound, @cb);
 }
 
+
+sub kick_job {
+  my $self  = shift;
+  my @cb    = (@_ and ref($_[-1]) eq 'CODE') ? splice(@_, -1) : ();
+  my $id    = shift || 0;
+  $self->run_cmd('kick-job' => $id, @cb);
+}
 
 sub use {
   my $self = shift;
@@ -912,6 +920,10 @@ Otherwise it will kick delayed jobs. The server will not kick more than C<$bound
 jobs.
 
 The response value is the number of jobs kicked
+
+=item B<kick_job ($id, [$callback])>
+
+Kick the specified job C<$id>.
 
 =item B<stats_job ($id, [$callback])>
 
