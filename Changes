@@ -1,5 +1,9 @@
 {{$NEXT}}
 
+1.123530 -- Tue Dec 18 16:03:02 CST 2012
+  * Don't deadlock in watch_only [James Stanley]
+  * - add kick-job method for kicking a specific job [Scott Wiersdorf]
+
 1.121460 -- Thu May 24 20:14:25 CDT 2012
   * Fix Used and watched tubes to track correctly after use [Matt Grimm]
 
