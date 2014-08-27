@@ -1,15 +1,13 @@
-#!perl
+#!/usr/bin/env perl
 
 use Test::More;
+use Test::Warnings;
 use AnyEvent::Beanstalk;
+use t::start_server;
 
-do 't/start_server.pl';
+my $c = get_client();
 
-our $port;
-
-my $c = AnyEvent::Beanstalk->new(server => "127.0.0.1:$port");
-
-plan tests => 1;
+plan tests => 2;
 
 $c->use('foo')->recv();
 is($c->using(), 'foo');

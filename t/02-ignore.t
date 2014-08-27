@@ -1,15 +1,14 @@
-#!perl
+#!/usr/bin/env perl
 
 use Test::More;
+use Test::Warnings;
 use AnyEvent::Beanstalk;
 
-do 't/start_server.pl';
+use t::start_server;
 
-our $port;
+my $c = get_client();
 
-my $c = AnyEvent::Beanstalk->new(server => "127.0.0.1:$port");
-
-plan tests => 2;
+plan tests => 3;
 
 $c->watch('foo')->recv();
 ok(grep { $_ eq 'foo' } $c->watching());
