@@ -1,5 +1,10 @@
 {{$NEXT}}
 
+1.142520 -- Tue Sep 09 16:07:10 CDT 2014
+  * call stats_job to get info for particular job [Michael Ellery]
+  * Adding "args" method for fetching job data. [Nigel Gregoire]
+  * Unit test updates. [Nigel Gregoire]
+
 1.123530 -- Tue Dec 18 16:03:02 CST 2012
   * Don't deadlock in watch_only [James Stanley]
   * - add kick-job method for kicking a specific job [Scott Wiersdorf]
