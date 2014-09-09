@@ -14,7 +14,7 @@ sub new {
 
 sub stats {
   my $self = shift;
-  my ($stats, $err) = $self->client->stats($self->id)->recv;
+  my ($stats, $err) = $self->client->stats_job($self->id)->recv;
   return $self->{_stats} = $stats if $stats;
   $self->error($err || 'unknown');
   return undef;
