@@ -74,7 +74,10 @@ sub bury {
   return undef;
 }
 
-sub decode {
+# DEPRECATED! The proper method name is "args".
+sub decode { goto \&args; }
+
+sub args {
   my $self = shift;
   my $data = $self->data;
   return unless defined($data);
