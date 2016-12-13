@@ -873,7 +873,7 @@ Stop watching C<$tube>
 
 The response value for C<ignore> is the number of tubes being watched
 
-=item B<watch_only (@tubes)>
+=item B<watch_only (@tubes, [$callback])>
 
 C<watch_only> will submit a C<list_tubes_watching> command then submit C<watch> and C<ignore>
 command to make the list match.
