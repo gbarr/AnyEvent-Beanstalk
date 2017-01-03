@@ -134,7 +134,7 @@ on the condition variable returned by L<AnyEvent::Beanstalk>. If this is undesir
 then a call can be made directly to the server via methods on the client.
 
 Note however that beanstalkd processes command in sequence. So if there is currently
-a reserve request pending. Any calls to these methods will not return until the
+a reserve request pending, any calls to these methods will not return until the
 reserve command has returned so that beanstalkd can process any subsequent commands.
 
 =head1 METHODS
