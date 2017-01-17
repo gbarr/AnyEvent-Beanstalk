@@ -303,7 +303,6 @@ sub watch_only {
 
   my %tubes = map { ($_ => 1) } @_;
   my $done = sub {
-    %tubes = ();
     delete $self->{_condvar}{$cv};
     $cv->send(@_);
   };
@@ -315,17 +314,18 @@ sub watch_only {
         $tubes{$t} = 0 unless delete $tubes{$t};
       }
       $done->() if !keys %tubes;
+      my @err;    # first error
       foreach my $t (sort { $tubes{$b} <=> $tubes{$a} } keys %tubes) {
         my $cmd = $tubes{$t} ? 'watch' : 'ignore';
         $self->run_cmd(
           $cmd, $t,
           sub {
-            return unless keys %tubes;
+            unless ($_[1] and $_[1] =~ /^WATCHING\b/) {
+              @err = @_ unless @err;
+            }
             delete $tubes{$t};
-            return $done->(@_)
-              if !@_
-                or $_[1] and $_[1] !~ /^WATCHING\b/
-                or !keys %tubes;
+            return $done->(@err ? @err : @_)
+              unless keys %tubes;
           }
         );
       }
