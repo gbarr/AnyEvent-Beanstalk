@@ -315,7 +315,10 @@ sub watch_only {
         $tubes{$t} = 0 unless delete $tubes{$t};
         $w->{$t}++;
       }
-      $done->() if !keys %tubes;
+      unless (keys %tubes) {    # nothing to do
+          my $ts = scalar @$tubes;
+          $done->($ts, "WATCHING $ts");
+      }
       my @err;    # first error
       foreach my $t (sort { $tubes{$b} <=> $tubes{$a} } keys %tubes) {
         my $cmd = $tubes{$t} ? 'watch' : 'ignore';
