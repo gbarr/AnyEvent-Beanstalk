@@ -310,8 +310,10 @@ sub watch_only {
     sub {
       my ($tubes,$r) = @_;
       return $done->(@_) unless $r and $r =~ /^OK\b/;
+      my $w = $self->{__watching} = {};
       foreach my $t (@$tubes) {
         $tubes{$t} = 0 unless delete $tubes{$t};
+        $w->{$t}++;
       }
       $done->() if !keys %tubes;
       my @err;    # first error
@@ -320,7 +322,9 @@ sub watch_only {
         $self->run_cmd(
           $cmd, $t,
           sub {
-            unless ($_[1] and $_[1] =~ /^WATCHING\b/) {
+            if ($_[1] and $_[1] =~ /^WATCHING\b/) {
+              $tubes{$t} ? $w->{$t}++ : delete $w->{$t};
+            } else {
               @err = @_ unless @err;
             }
             delete $tubes{$t};
