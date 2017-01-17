@@ -320,12 +320,11 @@ sub watch_only {
         $self->run_cmd(
           $cmd, $t,
           sub {
-            my ($r) = @_;
             return unless keys %tubes;
             delete $tubes{$t};
             return $done->(@_)
               if !@_
-                or $r ne 'WATCHING'
+                or $_[1] and $_[1] !~ /^WATCHING\b/
                 or !keys %tubes;
           }
         );
