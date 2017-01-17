@@ -297,7 +297,7 @@ sub watch_only {
 
   unless (@_) {
     delete $self->{_condvar}{$cv};
-    $cv->send('NOT_IGNORED');
+    $cv->send(undef, 'NOT_IGNORED');
     return $cv;
   }
 
