@@ -297,13 +297,12 @@ sub watch_only {
 
   unless (@_) {
     delete $self->{_condvar}{$cv};
-    $cv->send('NOT_IGNORED');
+    $cv->send(undef, 'NOT_IGNORED');
     return $cv;
   }
 
   my %tubes = map { ($_ => 1) } @_;
   my $done = sub {
-    %tubes = ();
     delete $self->{_condvar}{$cv};
     $cv->send(@_);
   };
@@ -311,22 +310,29 @@ sub watch_only {
     sub {
       my ($tubes,$r) = @_;
       return $done->(@_) unless $r and $r =~ /^OK\b/;
+      my $w = $self->{__watching} = {};
       foreach my $t (@$tubes) {
         $tubes{$t} = 0 unless delete $tubes{$t};
+        $w->{$t}++;
       }
-      $done->() if !keys %tubes;
+      unless (keys %tubes) {    # nothing to do
+          my $ts = scalar @$tubes;
+          $done->($ts, "WATCHING $ts");
+      }
+      my @err;    # first error
       foreach my $t (sort { $tubes{$b} <=> $tubes{$a} } keys %tubes) {
         my $cmd = $tubes{$t} ? 'watch' : 'ignore';
         $self->run_cmd(
           $cmd, $t,
           sub {
-            my ($r) = @_;
-            return unless keys %tubes;
+            if ($_[1] and $_[1] =~ /^WATCHING\b/) {
+              $tubes{$t} ? $w->{$t}++ : delete $w->{$t};
+            } else {
+              @err = @_ unless @err;
+            }
             delete $tubes{$t};
-            return $done->(@_)
-              if !@_
-                or $r ne 'WATCHING'
-                or !keys %tubes;
+            return $done->(@err ? @err : @_)
+              unless keys %tubes;
           }
         );
       }
@@ -406,7 +412,7 @@ sub use {
   $self->run_cmd(
     'use' => $tube,
     sub {
-      $self->{__using} = $_[0] if @_ and $_[1] =~ /^USING/;
+      $self->{__using} = $_[0] if @_ and $_[1] =~ /^USING\b/;
       $cb[0]->(@_) if @cb;
     }
   );
@@ -472,7 +478,7 @@ sub watch {
   $self->run_cmd(
     'watch' => $tube,
     sub {
-      $self->{__watching}{$tube} = 1 if @_ and $_[1] =~ /^WATCHING/;
+      $self->{__watching}{$tube} = 1 if @_ and $_[1] =~ /^WATCHING\b/;
       $cb[0]->(@_) if @cb;
     }
   );
@@ -487,7 +493,7 @@ sub ignore {
   $self->run_cmd(
     'ignore' => $tube,
     sub {
-      delete $self->{__watching}{$tube} if @_ and $_[1] =~ /^WATCHING/;
+      delete $self->{__watching}{$tube} if @_ and $_[1] =~ /^WATCHING\b/;
       $cb[0]->(@_) if @cb;
     }
   );
@@ -873,7 +879,7 @@ Stop watching C<$tube>
 
 The response value for C<ignore> is the number of tubes being watched
 
-=item B<watch_only (@tubes)>
+=item B<watch_only (@tubes, [$callback])>
 
 C<watch_only> will submit a C<list_tubes_watching> command then submit C<watch> and C<ignore>
 command to make the list match.
@@ -1354,7 +1360,7 @@ Same as C<disconnect>
 
 More tests
 
-=head1 ACKNOWLEDGEMTS
+=head1 ACKNOWLEDGEMENTS
 
 Large parts of this documention were lifted from the documention that comes with
 beanstalkd
