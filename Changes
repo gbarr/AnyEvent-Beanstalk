@@ -1,5 +1,8 @@
 {{$NEXT}}
 
+1.170590 -- Tue Feb 28 16:36:00 CST 2017
+  * Fixes for watch_only [Adriano Ferreira]
+
 1.142520 -- Tue Sep 09 16:07:10 CDT 2014
   * call stats_job to get info for particular job [Michael Ellery]
   * Adding "args" method for fetching job data. [Nigel Gregoire]
