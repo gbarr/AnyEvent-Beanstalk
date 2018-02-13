@@ -40,7 +40,6 @@ sub new {
       encoder    => $arg{encoder}    || $YAML_DUMP,
       decoder    => $arg{decoder}    || $YAML_LOAD,
       server     => $arg{server}     || undef,
-      debug      => $arg{debug}      || 0,
       on_error   => $arg{on_error}   || undef,
       on_connect => $arg{on_connect} || undef,
     },
@@ -702,11 +701,6 @@ decoded. The subroutine will be passed the data fetched from the beanstalkd
 server and should return the value the application can use. The default is
 to decode using YAML.
 
-=item B<debug ([$debug])>
-
-Set/get debug value. If set to a true value then all communication with the server will be
-output with C<warn>
-
 =item B<on_error ([$callback])>
 
 A code reference to call when there is an error communicating with the server, for example
@@ -1355,6 +1349,14 @@ each command will be sent the empty list.
 Same as C<disconnect>
 
 =back
+
+=head1 DEBUGGING
+
+You can set the C<AE_BEANSTALK_DEBUG> environment variable
+and then all communication with the server will be output
+with warn.
+
+  AE_BEANSTALK_DEBUG=1
 
 =head1 TODO
 
